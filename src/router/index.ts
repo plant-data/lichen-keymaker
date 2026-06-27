@@ -13,7 +13,6 @@ import FilterTaxaView from '@/views/form/FilterTaxaView.vue'
 import KeyLayout from '@/layouts/KeyLayout.vue'
 import KeyStepsView from '@/views/key/KeyStepsView.vue'
 import KeyTaxaView from '@/views/key/KeyTaxaView.vue'
-import KeyTaxaNamesView from '@/views/key/KeyTaxaNamesView.vue'
 import KeyInteractiveView from '@/views/key/KeyInteractiveView.vue'
 import KeyRefineView from '@/views/key/KeyRefineView.vue'
 import KeyDuplicateView from '@/views/key/KeyDuplicateView.vue'
@@ -133,7 +132,8 @@ const router = createRouter({
               path: 'key',
               name: 'key',
               redirect(to) {
-                return { name: 'key-view', params: { view: 'detailed' } }
+                // keep keyId/nodeId from the incoming route, just default the view
+                return { name: 'key-view', params: { ...to.params, view: 'detailed' } }
               },
               children: [
                 {
@@ -147,14 +147,18 @@ const router = createRouter({
             {
               path: 'species',
               name: 'species',
-              component: KeyTaxaView,
-              meta: { requiresKeyData: true }
-            },
-            {
-              path: 'species-list',
-              name: 'species-list',
-              component: KeyTaxaNamesView,
-              meta: { requiresKeyData: true }
+              redirect(to) {
+                // keep keyId/nodeId from the incoming route, just default the view
+                return { name: 'species-view', params: { ...to.params, view: 'images' } }
+              },
+              children: [
+                {
+                  path: ':view',
+                  name: 'species-view',
+                  component: KeyTaxaView,
+                  meta: { requiresKeyData: true }
+                }
+              ]
             },
             {
               path: 'interactive',
