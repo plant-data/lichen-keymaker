@@ -7,7 +7,7 @@ Users can select specific parameters to narrow down the taxa included in the key
 ## Prerequisites
 
 - node.js version 20 or higher
-- npm
+- pnpm
 
 ## Setup
 
@@ -18,14 +18,14 @@ cd lichen-keymaker
 ```
 ### Install the dependencies:
 ```bash
-npm install
+pnpm install
 ```
 ### Set up environment variables:
 - Rename `.env.example` to `.env`
 
 ### Start the development server:
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ## How to cite
