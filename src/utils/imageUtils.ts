@@ -9,3 +9,10 @@ export const imageUrlToThumbNailUrl = (imagePath: string | null) => {
   path.splice(2, 1, 'thumbnails')
   return `${paths.imagesPath}${path.join('/')}`
 }
+
+export const leadImageToUrl = (imagePath: string | null) => {
+  if (!imagePath) {
+    return placeholderImage
+  }
+  return `${paths.imagesPath}${imagePath}`
+}

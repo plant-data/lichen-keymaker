@@ -16,9 +16,8 @@
     >
       <component
         :is="currentVisualization"
-        :visibleSteps="displayedData"
+        v-bind="visualizationProps"
         @scroll-to-anchor="scrollToAnchor"
-        :taxonUrl="paths.taxonPagePath"
       />
       <div v-if="!allLoaded" ref="loadMoreTrigger" class="load-more-trigger"></div>
     </div>
@@ -43,8 +42,8 @@ const props = defineProps<{
 const route = useRoute()
 
 const viewOptions = [
+  { name: 'detailed-all', label: 'Illustrated all' },
   { name: 'detailed', label: 'Illustrated' },
-
   { name: 'description', label: 'With descriptions' },
   { name: 'simple', label: 'Simple' }
 ]
@@ -70,6 +69,11 @@ const {
   scrollToAnchor,
   resetAndReload
 } = usePaginatedData(() => props.stepsList, 50, 'leadId')
+
+const visualizationProps = computed(() => {
+  const base = { visibleSteps: displayedData.value, taxonUrl: paths.taxonPagePath }
+  return currentView.value === 'detailed-all' ? { ...base, showLeadImages: true } : base
+})
 
 let disconnectObserver = setupIntersectionObserver()
 

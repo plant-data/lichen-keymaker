@@ -32,10 +32,16 @@
           >
             {{ item.parentId }}
           </td>
-          <td
-            class="sm:w[85%] w-[80%] px-1 py-2 font-semibold tracking-wide md:w-[70%]"
-            v-html="item.leadText"
-          ></td>
+          <td class="w-[80%] px-1 py-2 font-semibold tracking-wide sm:w-[85%] md:w-[70%]">
+            <div v-html="item.leadText"></div>
+            <img
+              v-if="showLeadImages && item.leadImage"
+              :src="leadImageToUrl(item.leadImage)"
+              alt="Lead figure"
+              loading="lazy"
+              class="mt-2 h-auto max-h-[220px] w-auto max-w-full rounded-md object-contain sm:max-h-[280px]"
+            />
+          </td>
           <td class="w-[10%] px-1 py-2 font-medium md:w-[25%]">
             <a
               class="hidden text-sm text-blue-600 hover:underline md:block"
@@ -118,11 +124,12 @@
 
 <script setup lang="ts">
 import type { KeyLead } from '@/types'
-import { imageUrlToThumbNailUrl } from '@/utils/imageUtils'
+import { imageUrlToThumbNailUrl, leadImageToUrl } from '@/utils/imageUtils'
 
 const props = defineProps<{
   visibleSteps: KeyLead[]
   taxonUrl: string
+  showLeadImages?: boolean
 }>()
 
 defineEmits(['scroll-to-anchor'])
