@@ -57,23 +57,9 @@ export default class Tree {
     return this.root === node
   }
   find(leadId: number): Node | null {
-    return this.findRecursive(this.root, leadId)
-  }
-
-  findRecursive(node: Node | null, leadId: number): Node | null {
-    if (!node) return null
-    if (node.data.leadId === leadId) {
-      return node
-    }
-
-    for (const child of node.children) {
-      const result = this.findRecursive(child, leadId)
-      if (result !== null) {
-        return result
-      }
-    }
-
-    return null
+    // O(1) lookup via the id->Node map (kept in sync by buildTree/adjustIds),
+    // instead of an O(n) DFS from the root
+    return this.nodes[leadId] ?? null
   }
 
   /*updateNodes() {
@@ -95,14 +81,14 @@ export default class Tree {
     return node ? this.getLeavesRecursive(node) : null
   }
 
-  getLeavesRecursive(node: Node): Node[] {
+  getLeavesRecursive(node: Node, leaves: Node[] = []): Node[] {
     if (node.children.length === 0) {
-      return [node]
+      leaves.push(node)
+      return leaves
     }
 
-    let leaves: Node[] = []
     for (const child of node.children) {
-      leaves = leaves.concat(this.getLeavesRecursive(child))
+      this.getLeavesRecursive(child, leaves)
     }
 
     return leaves
@@ -158,15 +144,15 @@ export default class Tree {
     return list
   }
 
-  collectSubtree(node: Node | null = this.root): KeyLead[] {
+  collectSubtree(node: Node | null = this.root, list: KeyLead[] = []): KeyLead[] {
     if (!node) {
-      return []
+      return list
     }
 
-    let list = [node.data]
+    list.push(node.data)
 
     for (const child of node.children) {
-      list = list.concat(this.collectSubtree(child))
+      this.collectSubtree(child, list)
     }
 
     return list
@@ -211,7 +197,8 @@ export default class Tree {
     }
 
     if (node.children.length === 1) {
-      const parentNode = this.find(node.data.parentId)
+      // direct map lookup; pruning is post-order so the parent is still present
+      const parentNode = this.nodes[node.data.parentId]
       // this cover singles before the first couplet
       // still keeps 0
       if (!parentNode) {
@@ -253,10 +240,12 @@ export default class Tree {
     if (!this.root) return
 
     let idCounter = 1
+    // rebuild the id->Node map from scratch: renumbering in place with
+    // `delete this.nodes[oldId]` corrupts it because the new ids (1,2,3,…)
+    // collide with the original lead ids and delete already-renumbered entries
+    const newNodes: { [key: number]: Node } = {}
 
     const adjustIdsRecursive = (node: Node, parentId: number | null) => {
-      const oldId = node.data.leadId
-
       if (node.data.leadSpeciesId !== null) {
         node.data.leadId = node.data.leadSpecies
       } else {
@@ -265,9 +254,7 @@ export default class Tree {
 
       node.data.parentId = parentId
 
-      // Update references in the nodes object
-      delete this.nodes[oldId]
-      this.nodes[node.data.leadId] = node
+      newNodes[node.data.leadId] = node
 
       for (const child of node.children) {
         adjustIdsRecursive(child, node.data.leadId)
@@ -275,6 +262,7 @@ export default class Tree {
     }
 
     adjustIdsRecursive(this.root, null)
+    this.nodes = newNodes
   }
 
   findAllOccurrencesOfSpecies(speciesName: string): { leadId: number; leadRecordId: string }[] {
