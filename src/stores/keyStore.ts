@@ -51,11 +51,9 @@ export const useKeyStore = defineStore('key', () => {
     tree.buildTree(key.keyData)
     if (keyId.value === 'full') {
       tree.prune4()
-      return tree
+    } else {
+      tree.prune3(records)
     }
-    tree.prune3(records)
-    // put the species count
-    speciesCount.value = tree.getNumberOfUniqueLeaves(1)
     return tree
   }
 
@@ -75,6 +73,8 @@ export const useKeyStore = defineStore('key', () => {
       ])
 
       const newTree = buildKeyTree(retrievedFullKey, retrievedRecords)
+      // total species count for the whole key (set for both the full and filtered keys)
+      speciesCount.value = newTree.getNumberOfUniqueLeaves(1)
 
       // tentative for one species
       let stepsListFromTree = []
@@ -140,13 +140,14 @@ export const useKeyStore = defineStore('key', () => {
       return null
     }
     if (keyTree.root.children.length === 0) {
+      isCurrentNodeValid.value = true
       return keyTree.root
     }
 
     const actualNode = keyTree.find(leadId)
-    if (!actualNode) {
-      isCurrentNodeValid.value = false
-    }
+    // reset the flag on every lookup, otherwise a single invalid node keeps the
+    // "passage does not exist" error stuck for all later valid nodes
+    isCurrentNodeValid.value = actualNode !== null
 
     return actualNode
   }
@@ -158,6 +159,7 @@ export const useKeyStore = defineStore('key', () => {
 
     if (parseInt(nodeId) === 1) {
       currentStepsList.value = stepsList.value
+      isCurrentNodeValid.value = true
       return
     }
 
@@ -180,6 +182,7 @@ export const useKeyStore = defineStore('key', () => {
 
     tempStepsList.shift()
     nodeIdOfCurrentSteps.value = nodeId
+    isCurrentNodeValid.value = true
 
     const adjustment = parseInt(nodeId) - 1
     const adjustedStepsList = tempStepsList.map((step) => ({
@@ -199,6 +202,7 @@ export const useKeyStore = defineStore('key', () => {
 
     if (parseInt(nodeId) === 1) {
       currentUniqueSpeciesWithImages.value = uniqueSpeciesWithImages.value
+      isCurrentNodeValid.value = true
       return
     }
 
@@ -215,6 +219,26 @@ export const useKeyStore = defineStore('key', () => {
 
     currentUniqueSpeciesWithImages.value = reviseStepList(tempStepsList)
     nodeIdOfCurrentSpeciesImages.value = nodeId
+    isCurrentNodeValid.value = true
+  }
+
+  // builds the sub-key (steps) leading to every occurrence of a single species,
+  // used by the "duplicate species" view
+  const getMiniTree = async (speciesName: string): Promise<KeyLead[]> => {
+    if (!keyTree) {
+      return []
+    }
+
+    const uniqueRecords = keyTree
+      .getTreeSpeciesData(speciesName)
+      .filter((record): record is string => record !== null)
+
+    const retrievedFullKey = fullKey ?? (await fetchFullKey())
+    const miniTree = buildKeyTree(retrievedFullKey, uniqueRecords)
+
+    const miniStepsListFromTree = miniTree.getTreeAsListById() as KeyLead[]
+    miniStepsListFromTree.shift()
+    return miniStepsListFromTree
   }
 
   const resetAllExceptKey = () => {
@@ -258,6 +282,7 @@ export const useKeyStore = defineStore('key', () => {
     currentSpeciesCount,
 
     fetchData,
+    getMiniTree,
 
     setKeyId,
     setCurrentLeadId,

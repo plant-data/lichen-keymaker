@@ -141,16 +141,10 @@ export default class Tree {
   }
 
   getTreeAsList(node = this.root) {
-    if (!node) {
-      return []
-    }
+    const list = this.collectSubtree(node)
 
-    let list = [node.data]
-
-    for (const child of node.children) {
-      list = list.concat(this.getTreeAsList(child))
-    }
-
+    // sort once, on the fully flattened list — sorting inside the recursion
+    // re-sorted every partial list only to have it overwritten by the parent
     list.sort((a, b) => {
       if (a.parentId < b.parentId) {
         return -1
@@ -160,6 +154,20 @@ export default class Tree {
       }
       return 0
     })
+
+    return list
+  }
+
+  collectSubtree(node: Node | null = this.root): KeyLead[] {
+    if (!node) {
+      return []
+    }
+
+    let list = [node.data]
+
+    for (const child of node.children) {
+      list = list.concat(this.collectSubtree(child))
+    }
 
     return list
   }
