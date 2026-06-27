@@ -62,6 +62,18 @@ export default class Tree {
     return this.nodes[leadId] ?? null
   }
 
+  // the path of leads from the root down to the given node (root first), i.e. the
+  // trail of selected steps that lead to it — used by the History view
+  getAncestors(leadId: number): KeyLead[] {
+    const path: KeyLead[] = []
+    let node = this.find(leadId)
+    while (node) {
+      path.unshift(node.data)
+      node = typeof node.data.parentId === 'number' ? this.find(node.data.parentId) : null
+    }
+    return path
+  }
+
   /*updateNodes() {
     this.nodes = this.getNodesRecursive(this.root)
   }*/

@@ -1,5 +1,6 @@
 <template>
   <button
+    v-if="!hideTrigger"
     @click="openModal"
     class="rounded border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
   >
@@ -62,6 +63,8 @@ import { ref, computed, watch, onUnmounted, nextTick } from 'vue'
 import { useFormStore } from '@/stores/formStore'
 import { useScrollLock } from '@/composables/useScrollLock'
 
+withDefaults(defineProps<{ hideTrigger?: boolean }>(), { hideTrigger: false })
+
 const { toggleScroll, blockScroll, unblockScroll } = useScrollLock()
 const formStore = useFormStore()
 const isModalOpen = ref(false)
@@ -82,6 +85,9 @@ const closeModal = () => {
   isModalOpen.value = false
   lastFocusedElement.value?.focus()
 }
+
+// allow a parent (e.g. the key options menu) to open the modal without the trigger
+defineExpose({ openModal })
 
 const focusFirstElement = () => {
   const focusableElements = modalRef.value?.querySelectorAll(

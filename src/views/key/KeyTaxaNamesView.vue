@@ -26,7 +26,7 @@
 
 
 
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useKeyStore } from '@/stores/keyStore'
 import { useRoute } from 'vue-router'
 import { usePaginatedData } from '@/composables/usePaginatedData'
@@ -39,8 +39,18 @@ const { displayedData, allLoaded, loadMoreTrigger, setupIntersectionObserver } =
   () => keyStore.currentUniqueSpeciesWithImages
 )
 
+// react to Back/Restart node navigation, not just the initial mount
+watch(
+  () => route.params.nodeId,
+  (nodeId) => {
+    if (nodeId) {
+      keyStore.setUniqueSpeciesWithImagesFromNodeId(nodeId as string)
+    }
+  },
+  { immediate: true }
+)
+
 onMounted(() => {
-  keyStore.setUniqueSpeciesWithImagesFromNodeId(route.params.nodeId as string)
   setupIntersectionObserver()
 })
 </script>

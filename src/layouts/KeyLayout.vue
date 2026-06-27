@@ -19,10 +19,21 @@
           <p>
             <span class="font-bold tracking-wide">{{ keyStore.speciesCount }}</span> total species
           </p>
-          <p v-if="keyStore.speciesCount !== keyStore.currentSpeciesCount" class="">
-            <span class="font-bold tracking-wide">{{ keyStore.currentSpeciesCount }}</span>
-            remaining species
-          </p>
+          <div
+            v-if="keyStore.speciesCount !== keyStore.currentSpeciesCount"
+            class="flex items-center gap-2"
+          >
+            <p>
+              <span class="font-bold tracking-wide">{{ keyStore.currentSpeciesCount }}</span>
+              remaining species
+            </p>
+            <button
+              @click="goToRoot"
+              class="whitespace-nowrap rounded border border-surface-300 bg-white px-2 py-1 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
+            >
+              Restart
+            </button>
+          </div>
         </div>
 
         <div class="max-w-full overflow-x-auto">
@@ -36,13 +47,7 @@
             >
               {{ route.label }}
             </RouterLink>
-            <!--button to see filters-->
-            <div
-              v-if="Object.keys(formStore.passedFilterFormData).length !== 0"
-              class="flex-shrink-0"
-            >
-              <FilterModalShowOnly />
-            </div>
+            <KeyOptionsMenu />
           </nav>
         </div>
       </div>
@@ -54,15 +59,15 @@
 
 <script setup lang="ts">
 import { onMounted, watch, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useKeyStore } from '@/stores/keyStore'
-import { useFormStore } from '@/stores/formStore'
+import { useKeyNavigation } from '@/composables/useKeyNavigation'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import FilterModalShowOnly from '@/components/form/FilterModalShowOnly.vue'
+import KeyOptionsMenu from '@/components/key/KeyOptionsMenu.vue'
 
 const keyStore = useKeyStore()
-const formStore = useFormStore()
 const route = useRoute()
+const { goToRoot } = useKeyNavigation()
 
 const routes = computed(() => [
   {
@@ -84,13 +89,6 @@ const routes = computed(() => [
     path: { name: 'species-list', params: { keyId: route.params.keyId } },
     name: 'species-list',
     label: 'Species list'
-  },
-
-
-  {
-    path: { name: 'refine', params: { keyId: route.params.keyId } },
-    name: 'refine',
-    label: 'Adjust Key'
   }
 ])
 

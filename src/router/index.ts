@@ -17,6 +17,7 @@ import KeyTaxaNamesView from '@/views/key/KeyTaxaNamesView.vue'
 import KeyInteractiveView from '@/views/key/KeyInteractiveView.vue'
 import KeyRefineView from '@/views/key/KeyRefineView.vue'
 import KeyDuplicateView from '@/views/key/KeyDuplicateView.vue'
+import KeyHistoryView from '@/views/key/KeyHistoryView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import CitationView from '@/views/CitationView.vue'
 import InformationView from '@/views/InformationView.vue'
@@ -171,6 +172,12 @@ const router = createRouter({
               path: 'duplicate',
               name: 'duplicate',
               component: KeyDuplicateView,
+              meta: { requiresKeyData: true }
+            },
+            {
+              path: 'history',
+              name: 'history',
+              component: KeyHistoryView,
               meta: { requiresKeyData: true }
             }
           ]
