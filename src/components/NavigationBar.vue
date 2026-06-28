@@ -8,16 +8,15 @@
         <img class="h-10 w-10" src="/general/banner-key.jpg" alt="Your Company" />
       </div>
       <span
-        class="hidden sm:block homepage relative min-w-[300px] text-2xl font-semibold text-primary-950"
+        class="homepage relative hidden min-w-[300px] text-2xl font-semibold text-primary-950 sm:block"
         :class="{ 'is-home': isHomePage }"
         >ITALIC - THE KEYMAKER</span
       >
       <span
-        class="block sm:hidden homepage relative min-w-[300px] text-2xl font-semibold text-primary-950"
+        class="homepage relative block min-w-[300px] text-2xl font-semibold text-primary-950 sm:hidden"
         :class="{ 'is-home': isHomePage }"
-      >ITALIC KEYMAKER</span
+        >ITALIC KEYMAKER</span
       >
-
     </div>
 
     <!-- Desktop menu -->

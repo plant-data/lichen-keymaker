@@ -2,11 +2,11 @@
   <div class="flex-shrink-0">
     <button
       @click="toggleMenu"
-      class="flex items-center gap-1 whitespace-nowrap rounded border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
+      class="flex items-center gap-1 whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
       :aria-expanded="isOpen"
       aria-haspopup="true"
     >
-      Menu
+      Options
       <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
           fill-rule="evenodd"
@@ -52,18 +52,14 @@
               >
                 Back
               </button>
-              <button
-                @click="onRestart"
-                :disabled="isRoot"
-                class="block w-full px-4 py-3 text-center text-sm font-medium text-surface-700 hover:bg-primary-500/5 disabled:cursor-not-allowed disabled:text-surface-400 disabled:hover:bg-transparent"
-              >
-                Restart
-              </button>
 
               <div class="my-1 border-t border-surface-200"></div>
 
               <RouterLink
-                :to="{ name: 'refine', params: { keyId: route.params.keyId, nodeId: route.params.nodeId } }"
+                :to="{
+                  name: 'refine',
+                  params: { keyId: route.params.keyId, nodeId: route.params.nodeId }
+                }"
                 class="block w-full px-4 py-3 text-center text-sm font-medium text-surface-700 hover:bg-primary-500/5"
                 @click="closeMenu"
               >
@@ -76,7 +72,10 @@
                 Your query
               </button>
               <RouterLink
-                :to="{ name: 'history', params: { keyId: route.params.keyId, nodeId: route.params.nodeId } }"
+                :to="{
+                  name: 'history',
+                  params: { keyId: route.params.keyId, nodeId: route.params.nodeId }
+                }"
                 class="block w-full px-4 py-3 text-center text-sm font-medium text-surface-700 hover:bg-primary-500/5"
                 @click="closeMenu"
               >
@@ -99,7 +98,7 @@ import { useKeyNavigation } from '@/composables/useKeyNavigation'
 import FilterModalShowOnly from '@/components/form/FilterModalShowOnly.vue'
 
 const route = useRoute()
-const { isRoot, goToParent, goToRoot } = useKeyNavigation()
+const { isRoot, goToParent } = useKeyNavigation()
 
 const isOpen = ref(false)
 const queryModal = ref<InstanceType<typeof FilterModalShowOnly> | null>(null)
@@ -113,10 +112,6 @@ const closeMenu = () => {
 
 const onBack = () => {
   goToParent()
-  closeMenu()
-}
-const onRestart = () => {
-  goToRoot()
   closeMenu()
 }
 const onYourQuery = () => {

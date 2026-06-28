@@ -120,10 +120,10 @@ export default class Tree {
   async getTreeAsListByIdAsync(leadId?: number): Promise<KeyLead[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const result = this.getTreeAsListById(leadId);
-        resolve(result);
-      }, 0);
-    });
+        const result = this.getTreeAsListById(leadId)
+        resolve(result)
+      }, 0)
+    })
   }
   getTreeAsListById(leadId?: number) {
     if (!leadId) {

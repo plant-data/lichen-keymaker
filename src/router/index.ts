@@ -43,9 +43,9 @@ const router = createRouter({
           component: HomeView,
           meta: {
             title: 'ITALIC Keymaker',
-            description: 'This tool generates identification keys keys to subsets of lichen species defined by the user by specifying their distribution, traits and ecological requirements. The smaller keys are obtained from the general key to the lichens of Italy by eliminating all couplets leading to species which do no share all of the specified characters.'
+            description:
+              'This tool generates identification keys keys to subsets of lichen species defined by the user by specifying their distribution, traits and ecological requirements. The smaller keys are obtained from the general key to the lichens of Italy by eliminating all couplets leading to species which do no share all of the specified characters.'
           }
-
         },
         {
           path: 'info',
@@ -110,7 +110,6 @@ const router = createRouter({
           meta: {
             title: 'Species filter'
           },
-
 
           redirect: { name: 'FilterTaxaLetter', params: { letter: 'a' } },
           children: [
@@ -214,8 +213,7 @@ const isFirstLoad = { form: true, taxa: true }
   next()
 })*/
 router.beforeEach((to, from, next) => {
-
-  document.title = `${ to.meta.title }`
+  document.title = `${to.meta.title}`
   // Handle store resets for form and taxa routes
   // probabilmente inutile perchè ho cambiato i route name
   Object.entries(routeGroups).forEach(([group, { routes, resetStore }]) => {

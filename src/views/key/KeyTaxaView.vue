@@ -7,23 +7,9 @@
     </div>
 
     <div v-else>
-      <div class="mb-4 flex flex-wrap justify-end gap-2">
-        <RouterLink
-          v-for="viewOption in viewOptions"
-          :key="viewOption.name"
-          :to="{
-            name: 'species-view',
-            params: {
-              keyId: $route.params.keyId,
-              nodeId: $route.params.nodeId,
-              view: viewOption.name
-            }
-          }"
-          class="rounded border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
-          activeClass="!bg-primary-500 text-white border-green-500 hover:bg-primary-600 !border-primary-500"
-        >
-          {{ viewOption.label }}
-        </RouterLink>
+      <div class="mb-4 flex items-center gap-2">
+        <span class="text-xs font-medium uppercase tracking-wide text-surface-400">Display</span>
+        <ViewSwitcher :options="switcherOptions" variant="pills" />
       </div>
 
       <!-- Images -->
@@ -76,6 +62,7 @@ import { useRoute } from 'vue-router'
 import { usePaginatedData } from '@/composables/usePaginatedData'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import LazyImage from '@/components/LazyImage.vue'
+import ViewSwitcher from '@/components/key/ViewSwitcher.vue'
 import placeholderImage from '@/assets/placeholder.svg'
 import { paths } from '@/config/endpoints'
 import { imageUrlToThumbNailUrl } from '@/utils/imageUtils'
@@ -87,6 +74,16 @@ const viewOptions = [
   { name: 'images', label: 'Images' },
   { name: 'list', label: 'List' }
 ]
+
+const switcherOptions = computed(() =>
+  viewOptions.map((option) => ({
+    label: option.label,
+    to: {
+      name: 'species-view',
+      params: { keyId: route.params.keyId, nodeId: route.params.nodeId, view: option.name }
+    }
+  }))
+)
 
 const currentView = computed(() => (route.params.view as string) || 'images')
 

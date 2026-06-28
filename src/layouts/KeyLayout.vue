@@ -12,43 +12,33 @@
     </div>
 
     <div v-else>
-      <div class="mb-1 flex flex-col items-start justify-between lg:flex-row lg:items-center">
+      <div class="mb-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <!-- counts pill -->
         <div
-          class="mb-2 flex w-full flex-row-reverse items-start justify-between lg:mb-0 lg:h-16 lg:w-auto lg:flex-col lg:justify-center lg:px-0"
+          class="flex w-full items-stretch overflow-hidden rounded-2xl border border-surface-300 bg-white lg:w-auto"
         >
-          <p>
-            <span class="font-bold tracking-wide">{{ keyStore.speciesCount }}</span> total species
+          <p v-if="isFiltered" class="grow whitespace-nowrap px-4 py-2 text-sm text-surface-600">
+            <span class="font-bold">{{ keyStore.currentSpeciesCount }}</span> remaining of
+            {{ keyStore.speciesCount }}
           </p>
-          <div
-            v-if="keyStore.speciesCount !== keyStore.currentSpeciesCount"
-            class="flex items-center gap-2"
-          >
-            <p>
-              <span class="font-bold tracking-wide">{{ keyStore.currentSpeciesCount }}</span>
-              remaining species
-            </p>
+          <p v-else class="grow whitespace-nowrap px-4 py-2 text-sm text-surface-600">
+            <span class="font-bold">{{ keyStore.speciesCount }}</span> species
+          </p>
+          <template v-if="isFiltered">
+            <div class="w-px shrink-0 bg-surface-300"></div>
             <button
               @click="goToRoot"
-              class="whitespace-nowrap rounded border border-surface-300 bg-white px-2 py-1 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
+              class="flex items-center whitespace-nowrap px-4 py-2 text-sm font-medium text-surface-600 transition duration-150 ease-in-out hover:bg-primary-500 hover:text-white"
             >
               Restart
             </button>
-          </div>
+          </template>
         </div>
 
-        <div class="max-w-full overflow-x-auto">
-          <nav class="flex flex-nowrap gap-2 pb-2">
-            <RouterLink
-              v-for="(route, index) in routes"
-              :key="index"
-              :to="route.path"
-              class="whitespace-nowrap rounded border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
-              activeClass="!bg-primary-500 text-white !border-primary-500 hover:bg-primary-600"
-            >
-              {{ route.label }}
-            </RouterLink>
-            <KeyOptionsMenu />
-          </nav>
+        <!-- primary view switcher + options -->
+        <div class="flex flex-col items-center gap-3 lg:flex-row lg:items-center lg:gap-2">
+          <ViewSwitcher :options="routes" variant="segmented" block />
+          <KeyOptionsMenu />
         </div>
       </div>
 
@@ -64,25 +54,25 @@ import { useKeyStore } from '@/stores/keyStore'
 import { useKeyNavigation } from '@/composables/useKeyNavigation'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import KeyOptionsMenu from '@/components/key/KeyOptionsMenu.vue'
+import ViewSwitcher from '@/components/key/ViewSwitcher.vue'
 
 const keyStore = useKeyStore()
 const route = useRoute()
 const { goToRoot } = useKeyNavigation()
 
+const isFiltered = computed(() => keyStore.speciesCount !== keyStore.currentSpeciesCount)
+
 const routes = computed(() => [
   {
-    path: { name: 'key', params: { keyId: route.params.keyId } },
-    name: 'key',
+    to: { name: 'key', params: { keyId: route.params.keyId } },
     label: 'Textual keys'
   },
   {
-    path: { name: 'interactive', params: { keyId: route.params.keyId } },
-    name: 'interactive',
+    to: { name: 'interactive', params: { keyId: route.params.keyId } },
     label: 'Interactive key'
   },
   {
-    path: { name: 'species', params: { keyId: route.params.keyId } },
-    name: 'species',
+    to: { name: 'species', params: { keyId: route.params.keyId } },
     label: 'Gallery'
   }
 ])

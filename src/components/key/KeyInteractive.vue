@@ -5,14 +5,14 @@
         <button
           v-if="!isRoot"
           @click="navigateToParent"
-          class="min-w-20 rounded border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:bg-primary-500/30"
+          class="min-w-20 rounded-xl border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
         >
           Back
         </button>
         <button
           v-if="!isRoot"
           @click="navigateToRoot"
-          class="min-w-20 rounded border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:bg-primary-500/30"
+          class="min-w-20 rounded-xl border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
         >
           Restart
         </button>
@@ -86,11 +86,14 @@ onMounted(() => {
   localKeyTree.value = keyStore.getKeyTree()
 })
 
-watch(() => keyStore.isLoading, (newValue) => {
-  if (!newValue) {
-    localKeyTree.value = keyStore.getKeyTree()
+watch(
+  () => keyStore.isLoading,
+  (newValue) => {
+    if (!newValue) {
+      localKeyTree.value = keyStore.getKeyTree()
+    }
   }
-})
+)
 
 const isRoot = computed(() => {
   return props.currentNode && localKeyTree.value && localKeyTree.value.isRoot(props.currentNode)

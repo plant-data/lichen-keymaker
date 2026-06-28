@@ -1,15 +1,8 @@
 <template>
   <div>
-    <div class="mb-4 flex flex-wrap justify-end gap-2">
-      <RouterLink
-        v-for="viewOption in viewOptions"
-        :key="viewOption.name"
-        :to="{ name: 'key-view', params: { keyId: $route.params.keyId, view: viewOption.name } }"
-        class="rounded border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
-        activeClass="!bg-primary-500 text-white border-green-500 hover:bg-primary-600 !border-primary-500"
-      >
-        {{ viewOption.label }}
-      </RouterLink>
+    <div class="mb-4 flex items-center gap-2">
+      <span class="text-xs font-medium uppercase tracking-wide text-surface-400">Display</span>
+      <ViewSwitcher :options="switcherOptions" variant="pills" />
     </div>
     <div
       class="steps-table-container mx-auto w-[96vw] max-w-full overflow-hidden rounded-md border border-surface-300"
@@ -31,9 +24,9 @@ import { usePaginatedData } from '@/composables/usePaginatedData'
 import DetailedKeyTable from '@/components/key/DetailedKeyTable.vue'
 import SimpleKeyTable from '@/components/key/SimpleKeyTable.vue'
 import KeyTableDescriptions from '@/components/key/KeyTableDescriptions.vue'
+import ViewSwitcher from '@/components/key/ViewSwitcher.vue'
 import { paths } from '@/config/endpoints'
 import type { KeyLead } from '@/types'
-
 
 const props = defineProps<{
   stepsList: KeyLead[]
@@ -47,6 +40,13 @@ const viewOptions = [
   { name: 'description', label: 'With descriptions' },
   { name: 'simple', label: 'Simple' }
 ]
+
+const switcherOptions = computed(() =>
+  viewOptions.map((option) => ({
+    label: option.label,
+    to: { name: 'key-view', params: { keyId: route.params.keyId, view: option.name } }
+  }))
+)
 
 const currentView = computed(() => (route.params.view as string) || 'detailed')
 
