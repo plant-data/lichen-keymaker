@@ -3,6 +3,7 @@
     <div class="mb-4 flex items-center gap-2">
       <span class="text-xs font-medium uppercase tracking-wide text-surface-400">Display</span>
       <ViewSwitcher :options="switcherOptions" variant="pills" />
+      <ExportPdfButton class="ml-auto" />
     </div>
     <div
       class="steps-table-container mx-auto w-[96vw] max-w-full overflow-hidden rounded-md border border-surface-300"
@@ -25,6 +26,7 @@ import DetailedKeyTable from '@/components/key/DetailedKeyTable.vue'
 import SimpleKeyTable from '@/components/key/SimpleKeyTable.vue'
 import KeyTableDescriptions from '@/components/key/KeyTableDescriptions.vue'
 import ViewSwitcher from '@/components/key/ViewSwitcher.vue'
+import ExportPdfButton from '@/components/key/ExportPdfButton.vue'
 import { paths } from '@/config/endpoints'
 import type { KeyLead } from '@/types'
 
