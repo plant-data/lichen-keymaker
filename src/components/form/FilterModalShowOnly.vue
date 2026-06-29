@@ -32,11 +32,11 @@
 
           <!-- Scrollable Content -->
           <div class="flex-grow overflow-y-auto px-1 py-4 sm:px-4">
-            <ul class="space-y-2 text-sm">
+            <ul class="flex flex-wrap gap-2 text-sm">
               <li
                 v-for="filter in selectedFilters"
                 :key="filter.id"
-                class="relative rounded bg-surface-100 p-3 pr-6"
+                class="rounded-full bg-surface-100 px-3 py-1.5"
               >
                 <span class="font-semibold">{{ filter.title }}:</span> {{ filter.text }}
               </li>
@@ -44,10 +44,10 @@
           </div>
 
           <!-- Fixed Footer -->
-          <div class="grid grid-cols-1 gap-4 border-t border-surface-200 p-4">
+          <div class="flex justify-center border-t border-surface-200 p-4">
             <button
               @click="closeModal"
-              class="w-full rounded border border-surface-300 bg-surface-500 px-4 py-2 text-surface-0 hover:bg-surface-600 focus:outline-none focus:ring-2 focus:ring-surface-500 focus:ring-opacity-50"
+              class="rounded-full border border-surface-300 bg-surface-500 px-8 py-2 text-surface-0 hover:bg-surface-600 focus:outline-none focus:ring-2 focus:ring-surface-500 focus:ring-opacity-50"
             >
               Close
             </button>

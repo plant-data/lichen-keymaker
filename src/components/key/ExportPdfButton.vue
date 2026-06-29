@@ -69,7 +69,7 @@ const { isExporting, progress, error, exportPdf } = useKeyPdfExport()
 
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
-const scope = ref<ExportScope>('whole')
+const scope = ref<ExportScope>('step')
 const includeDescriptions = ref(false)
 
 const togglePanel = () => {

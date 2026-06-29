@@ -3,13 +3,13 @@
 // safe to run inside a Web Worker (where `DOMParser` does not exist, which is
 // also why the `html-to-pdfmake` library is not an option here).
 //
-// Supported markup: <i>/<em> -> italics, <b>/<strong> -> bold, <br> -> newline.
-// <sub>/<sup> and any other tags are stripped but their text is kept inline
-// (pdfmake has no real sub/superscript). Common HTML entities are decoded.
+// Supported markup: <b>/<strong> -> bold, <br> -> newline. <i>/<em>, <sub>,
+// <sup> and any other tags are stripped but their text is kept inline (the PDF
+// avoids italics entirely; pdfmake has no real sub/superscript). Common HTML
+// entities are decoded.
 
 export interface PdfTextRun {
   text: string
-  italics?: boolean
   bold?: boolean
 }
 
@@ -62,7 +62,6 @@ export function htmlToPdfmake(html: string | null | undefined): PdfTextRun[] {
   if (!html) return [{ text: '' }]
 
   const runs: PdfTextRun[] = []
-  let italicDepth = 0
   let boldDepth = 0
 
   TOKEN_REGEX.lastIndex = 0
@@ -74,7 +73,6 @@ export function htmlToPdfmake(html: string | null | undefined): PdfTextRun[] {
       const text = decodeEntities(textChunk)
       if (text.length > 0) {
         const run: PdfTextRun = { text }
-        if (italicDepth > 0) run.italics = true
         if (boldDepth > 0) run.bold = true
         runs.push(run)
       }
@@ -84,10 +82,6 @@ export function htmlToPdfmake(html: string | null | undefined): PdfTextRun[] {
     const tag = tagName.toLowerCase()
     const isClose = full[1] === '/'
     switch (tag) {
-      case 'i':
-      case 'em':
-        italicDepth = isClose ? Math.max(0, italicDepth - 1) : italicDepth + 1
-        break
       case 'b':
       case 'strong':
         boldDepth = isClose ? Math.max(0, boldDepth - 1) : boldDepth + 1
@@ -95,7 +89,7 @@ export function htmlToPdfmake(html: string | null | undefined): PdfTextRun[] {
       case 'br':
         runs.push({ text: '\n' })
         break
-      // <sub>, <sup> and unknown tags: dropped, their text content is kept.
+      // <i>, <em>, <sub>, <sup> and unknown tags: dropped, their text is kept.
     }
   }
 

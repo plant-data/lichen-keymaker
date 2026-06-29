@@ -46,26 +46,6 @@
 
             <div class="flex flex-col py-2">
               <button
-                @click="onBack"
-                :disabled="isRoot"
-                class="block w-full px-4 py-3 text-center text-sm font-medium text-surface-700 hover:bg-primary-500/5 disabled:cursor-not-allowed disabled:text-surface-400 disabled:hover:bg-transparent"
-              >
-                Back
-              </button>
-
-              <div class="my-1 border-t border-surface-200"></div>
-
-              <RouterLink
-                :to="{
-                  name: 'refine',
-                  params: { keyId: route.params.keyId, nodeId: route.params.nodeId }
-                }"
-                class="block w-full px-4 py-3 text-center text-sm font-medium text-surface-700 hover:bg-primary-500/5"
-                @click="closeMenu"
-              >
-                Adjust Key
-              </RouterLink>
-              <button
                 @click="onYourQuery"
                 class="block w-full px-4 py-3 text-center text-sm font-medium text-surface-700 hover:bg-primary-500/5"
               >
@@ -79,7 +59,20 @@
                 class="block w-full px-4 py-3 text-center text-sm font-medium text-surface-700 hover:bg-primary-500/5"
                 @click="closeMenu"
               >
-                History
+                Identification steps
+              </RouterLink>
+
+              <div class="my-1 border-t border-surface-200"></div>
+
+              <RouterLink
+                :to="{
+                  name: 'refine',
+                  params: { keyId: route.params.keyId, nodeId: route.params.nodeId }
+                }"
+                class="block w-full px-4 py-3 text-center text-sm font-medium text-surface-700 hover:bg-primary-500/5"
+                @click="closeMenu"
+              >
+                Adjust Key
               </RouterLink>
             </div>
           </div>
@@ -94,11 +87,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useKeyNavigation } from '@/composables/useKeyNavigation'
 import FilterModalShowOnly from '@/components/form/FilterModalShowOnly.vue'
 
 const route = useRoute()
-const { isRoot, goToParent } = useKeyNavigation()
 
 const isOpen = ref(false)
 const queryModal = ref<InstanceType<typeof FilterModalShowOnly> | null>(null)
@@ -110,10 +101,6 @@ const closeMenu = () => {
   isOpen.value = false
 }
 
-const onBack = () => {
-  goToParent()
-  closeMenu()
-}
 const onYourQuery = () => {
   queryModal.value?.openModal()
   closeMenu()

@@ -8,7 +8,7 @@
 
 import * as pdfMakeNs from 'pdfmake/build/pdfmake'
 import vfs from 'pdfmake/build/vfs_fonts'
-import type { Column, Content, TDocumentDefinitions } from 'pdfmake/interfaces'
+import type { Content, TDocumentDefinitions } from 'pdfmake/interfaces'
 import { htmlToPdfmake } from '@/utils/htmlToPdfmake'
 
 // The browser UMD build's default export is the pdfMake instance; its methods
@@ -49,8 +49,7 @@ const PROGRESS_CHUNK = 250
 
 function buildRow(row: PdfRow, includeDescriptions: boolean): Content[] {
   // `leadId` is the next couplet number, or the species name for a terminal
-  // lead (set by Tree.adjustIds). Species names are italicised.
-  const isSpecies = row.italicId !== null
+  // lead (set by Tree.adjustIds).
   const leadTo = String(row.leadId ?? '')
 
   const blocks: Content[] = [
@@ -58,7 +57,7 @@ function buildRow(row: PdfRow, includeDescriptions: boolean): Content[] {
       columns: [
         { width: COL_COUPLET, text: String(row.parentId ?? ''), bold: true },
         { width: '*', text: htmlToPdfmake(row.leadText) },
-        { width: COL_LEAD_TO, text: isSpecies ? { text: leadTo, italics: true } : leadTo }
+        { width: COL_LEAD_TO, text: leadTo }
       ],
       columnGap: COLUMN_GAP,
       margin: [0, 1.5, 0, 1.5]
@@ -93,27 +92,10 @@ function buildDocDefinition(req: PdfExportRequest): TDocumentDefinitions {
     }
   }
 
-  const headerCell = (text: string, width: number | '*'): Column => ({
-    width,
-    text,
-    bold: true,
-    fontSize: 8,
-    color: '#888888'
-  })
-
   return {
     pageSize: 'A4',
     pageMargins: [40, 56, 40, 40],
     defaultStyle: { fontSize: 9, lineHeight: 1.1 },
-    header: () => ({
-      margin: [40, 28, 40, 0],
-      columns: [
-        headerCell('Couplet', COL_COUPLET),
-        headerCell('Lead', '*'),
-        headerCell('Lead to', COL_LEAD_TO)
-      ],
-      columnGap: COLUMN_GAP
-    }),
     footer: (currentPage: number, pageCount: number) => ({
       text: `${currentPage} / ${pageCount}`,
       alignment: 'center',

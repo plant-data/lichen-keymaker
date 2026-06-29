@@ -12,13 +12,13 @@ describe('htmlToPdfmake', () => {
     expect(htmlToPdfmake('Thallus crustose')).toEqual([{ text: 'Thallus crustose' }])
   })
 
-  it('marks <i> and <em> as italics', () => {
+  it('keeps <i> and <em> text but never applies italics', () => {
     expect(htmlToPdfmake('see <i>Lecanora</i> here')).toEqual([
       { text: 'see ' },
-      { text: 'Lecanora', italics: true },
+      { text: 'Lecanora' },
       { text: ' here' }
     ])
-    expect(htmlToPdfmake('<em>x</em>')).toEqual([{ text: 'x', italics: true }])
+    expect(htmlToPdfmake('<em>x</em>')).toEqual([{ text: 'x' }])
   })
 
   it('marks <b> and <strong> as bold', () => {
@@ -30,10 +30,10 @@ describe('htmlToPdfmake', () => {
     expect(htmlToPdfmake('<strong>y</strong>')).toEqual([{ text: 'y', bold: true }])
   })
 
-  it('handles nested bold + italics', () => {
+  it('keeps bold, ignoring nested italics', () => {
     expect(htmlToPdfmake('<b>bold <i>both</i></b>')).toEqual([
       { text: 'bold ', bold: true },
-      { text: 'both', bold: true, italics: true }
+      { text: 'both', bold: true }
     ])
   })
 
