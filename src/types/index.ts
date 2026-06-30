@@ -34,6 +34,28 @@ export type KeyUniqueSpeciesData = {
 }
 
 /**
+ * A single candidate returned by the ITALIC name-match API (v2)
+ * (used both for the primary `match` and for each of `other_matches`)
+ */
+export type MatchCandidate = {
+  matched_name: string
+  status: string
+  accepted_name: string
+  name_score: number
+  auth_score: number
+  taxon_id: number | null
+}
+
+/**
+ * The response of the ITALIC name-match API for a single input name
+ */
+export type NameMatchResponse = {
+  input_name: string
+  match: MatchCandidate | null
+  other_matches: MatchCandidate[]
+}
+
+/**
  * The type for teh form data
  * */
 export type FormData = {

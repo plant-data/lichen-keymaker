@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-2xl p-4">
+  <div>
     <div v-if="isLoading" class="text-center text-lg font-semibold"><LoadingSpinner /></div>
     <div v-else-if="error" class="text-center text-lg font-semibold text-red-500">
       Error: {{ error.message }}

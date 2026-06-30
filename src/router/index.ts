@@ -10,6 +10,7 @@ import FilterGeneralView from '@/views/form/FilterGeneralView.vue'
 import FilterTraitsView from '@/views/form/FilterTraitsView.vue'
 import FilterEcologyView from '@/views/form/FilterEcologyView.vue'
 import FilterTaxaView from '@/views/form/FilterTaxaView.vue'
+import SpeciesChoiceLayout from '@/layouts/SpeciesChoiceLayout.vue'
 import KeyLayout from '@/layouts/KeyLayout.vue'
 import KeyStepsView from '@/views/key/KeyStepsView.vue'
 import KeyTaxaView from '@/views/key/KeyTaxaView.vue'
@@ -20,6 +21,7 @@ import KeyHistoryView from '@/views/key/KeyHistoryView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import CitationView from '@/views/CitationView.vue'
 import InformationView from '@/views/InformationView.vue'
+import UploadDatasetView from '@/views/UploadDatasetView.vue'
 
 const router = createRouter({
   history: createWebHistory('/key-maker/'),
@@ -99,20 +101,24 @@ const router = createRouter({
             }
           ]
         },
-        /*{
-          path: 'filter-species/:letter?',
-          name: 'FilterTaxa',
-          component: FilterTaxaView
-        },*/
         {
           path: 'filter-species',
           name: 'FilterTaxa',
+          component: SpeciesChoiceLayout,
           meta: {
             title: 'Species filter'
           },
-
           redirect: { name: 'FilterTaxaLetter', params: { letter: 'a' } },
           children: [
+            {
+              path: 'upload-dataset',
+              name: 'upload-dataset',
+              component: UploadDatasetView,
+              meta: {
+                title: 'Upload dataset',
+                description: 'Upload a dataset of scientific names and build a key from it'
+              }
+            },
             {
               path: ':letter',
               name: 'FilterTaxaLetter',
