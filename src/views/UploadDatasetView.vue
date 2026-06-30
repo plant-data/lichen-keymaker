@@ -1,6 +1,5 @@
 <template>
-  <div class="mx-auto max-w-3xl p-4">
-    <h1 class="mb-2 text-2xl font-semibold text-primary-950">Upload dataset</h1>
+  <div>
     <p class="mb-6 text-sm text-surface-700">
       Upload a spreadsheet (.xls, .xlsx or .csv, max 10&nbsp;MB), pick the column with scientific
       names, and we will align them to ITALIC and build a key from your selection.
