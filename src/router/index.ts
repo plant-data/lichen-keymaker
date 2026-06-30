@@ -20,6 +20,7 @@ import KeyHistoryView from '@/views/key/KeyHistoryView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import CitationView from '@/views/CitationView.vue'
 import InformationView from '@/views/InformationView.vue'
+import UploadDatasetView from '@/views/UploadDatasetView.vue'
 
 const router = createRouter({
   history: createWebHistory('/key-maker/'),
@@ -63,6 +64,15 @@ const router = createRouter({
           meta: {
             title: 'How to cite',
             description: 'How to cite ITALIC Keymaker'
+          }
+        },
+        {
+          path: 'upload-dataset',
+          name: 'upload-dataset',
+          component: UploadDatasetView,
+          meta: {
+            title: 'Upload dataset',
+            description: 'Upload a dataset of scientific names and build a key from it'
           }
         },
         {
