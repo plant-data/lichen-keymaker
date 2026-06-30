@@ -32,11 +32,11 @@
 
           <!-- Scrollable Content -->
           <div class="flex-grow overflow-y-auto px-1 py-4 sm:px-4">
-            <ul class="flex flex-wrap gap-2 text-sm">
+            <ul class="space-y-2 text-sm">
               <li
                 v-for="filter in selectedFilters"
                 :key="filter.id"
-                class="rounded-full bg-surface-100 px-3 py-1.5"
+                class="rounded bg-surface-100 p-3"
               >
                 <span class="font-semibold">{{ filter.title }}:</span> {{ filter.text }}
               </li>

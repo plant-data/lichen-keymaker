@@ -36,8 +36,10 @@
         </div>
 
         <!-- primary view switcher + options -->
-        <div class="flex flex-col items-center gap-3 lg:flex-row lg:items-center lg:gap-2">
-          <ViewSwitcher :options="routes" variant="segmented" block />
+        <div class="flex flex-row items-center gap-2 sm:flex-col sm:gap-3 lg:flex-row lg:gap-2">
+          <div class="min-w-0 flex-1 sm:contents">
+            <ViewSwitcher :options="routes" variant="segmented" block />
+          </div>
           <KeyOptionsMenu />
         </div>
       </div>

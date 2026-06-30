@@ -39,7 +39,7 @@
               :src="leadImageToUrl(item.leadImage)"
               alt="Lead figure"
               loading="lazy"
-              class="mt-2 h-auto max-h-[220px] w-auto max-w-full rounded-md object-contain sm:max-h-[280px]"
+              class="mt-2 h-auto max-h-[80px] w-auto max-w-full rounded-md object-contain"
             />
           </td>
           <td class="w-[10%] px-1 py-2 font-medium md:w-[25%]">

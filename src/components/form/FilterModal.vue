@@ -54,17 +54,17 @@
             </div>
 
             <!-- Fixed Footer -->
-            <div class="grid grid-cols-2 gap-4 border-t border-surface-200 p-4">
+            <div class="flex justify-center gap-3 border-t border-surface-200 p-4">
               <button
                 @click="closeModal"
-                class="w-full rounded border border-surface-300 bg-surface-500 px-4 py-2 text-surface-0 hover:bg-surface-600 focus:outline-none focus:ring-2 focus:ring-surface-500 focus:ring-opacity-50"
+                class="rounded-full border border-surface-300 bg-surface-500 px-6 py-2 text-surface-0 hover:bg-surface-600 focus:outline-none focus:ring-2 focus:ring-surface-500 focus:ring-opacity-50"
               >
                 Close
               </button>
               <button
                 type="submit"
                 form="filter-form"
-                class="w-full rounded border border-surface-300 bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
+                class="rounded-full border border-surface-300 bg-blue-500 px-6 py-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
               >
                 Make key
               </button>

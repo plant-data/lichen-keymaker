@@ -5,9 +5,11 @@
       class="flex items-center gap-1 whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
       :aria-expanded="isOpen"
       aria-haspopup="true"
+      aria-label="Options"
     >
-      Options
-      <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <i class="pi pi-cog text-base sm:hidden"></i>
+      <span class="hidden sm:inline">Options</span>
+      <svg class="hidden h-4 w-4 sm:block" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
           fill-rule="evenodd"
           d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
