@@ -13,7 +13,7 @@
         >ITALIC - THE KEYMAKER</span
       >
       <span
-        class="homepage relative block min-w-[300px] text-2xl font-semibold text-primary-950 sm:hidden"
+        class="homepage relative block text-2xl font-semibold text-primary-950 sm:hidden"
         :class="{ 'is-home': isHomePage }"
         >ITALIC KEYMAKER</span
       >
