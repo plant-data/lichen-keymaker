@@ -18,6 +18,7 @@ import KeyInteractiveView from '@/views/key/KeyInteractiveView.vue'
 import KeyRefineView from '@/views/key/KeyRefineView.vue'
 import KeyDuplicateView from '@/views/key/KeyDuplicateView.vue'
 import KeyHistoryView from '@/views/key/KeyHistoryView.vue'
+import KeyFindSpeciesView from '@/views/key/KeyFindSpeciesView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import CitationView from '@/views/CitationView.vue'
 import InformationView from '@/views/InformationView.vue'
@@ -187,6 +188,12 @@ const router = createRouter({
               path: 'history',
               name: 'history',
               component: KeyHistoryView,
+              meta: { requiresKeyData: true }
+            },
+            {
+              path: 'find-species',
+              name: 'find-species',
+              component: KeyFindSpeciesView,
               meta: { requiresKeyData: true }
             }
           ]

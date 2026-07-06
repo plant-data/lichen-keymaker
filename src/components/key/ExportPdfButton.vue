@@ -4,7 +4,7 @@
       type="button"
       @click="togglePanel"
       :disabled="isExporting"
-      class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5 disabled:cursor-not-allowed disabled:opacity-60"
+      class="inline-flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
     >
       <i class="pi pi-file-pdf text-sm"></i>
       <span>Export PDF</span>
@@ -12,7 +12,7 @@
 
     <div
       v-if="open"
-      class="absolute right-0 z-20 mt-2 w-64 rounded-xl border border-surface-300 bg-white p-4 shadow-lg"
+      class="absolute right-0 z-20 mt-2 w-64 max-w-[calc(100vw-1rem)] rounded-xl border border-surface-300 bg-white p-4 shadow-lg"
     >
       <fieldset class="mb-3">
         <legend class="mb-1.5 text-xs font-semibold uppercase tracking-wide text-surface-400">

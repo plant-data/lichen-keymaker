@@ -277,6 +277,29 @@ export default class Tree {
     this.nodes = newNodes
   }
 
+  // every root->leaf path that ends at the given species. A species can occur in
+  // several branches; because adjustIds() collapses all of a species' occurrences
+  // onto the same leadId (the species name), the id->Node map can't recover them,
+  // so we capture each full path during a single DFS instead.
+  getPathsToSpecies(speciesName: string): KeyLead[][] {
+    const paths: KeyLead[][] = []
+
+    const walk = (node: Node, trail: KeyLead[]) => {
+      const nextTrail = [...trail, node.data]
+      if (node.data.leadSpecies === speciesName) {
+        paths.push(nextTrail)
+      }
+      for (const child of node.children) {
+        walk(child, nextTrail)
+      }
+    }
+
+    if (this.root) {
+      walk(this.root, [])
+    }
+    return paths
+  }
+
   findAllOccurrencesOfSpecies(speciesName: string): { leadId: number; leadRecordId: string }[] {
     const occurrences: { leadId: number; leadRecordId: string }[] = []
 

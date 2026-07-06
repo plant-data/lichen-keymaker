@@ -55,6 +55,16 @@
               </button>
               <RouterLink
                 :to="{
+                  name: 'find-species',
+                  params: { keyId: route.params.keyId, nodeId: route.params.nodeId }
+                }"
+                class="block w-full px-4 py-3 text-center text-sm font-medium text-surface-700 hover:bg-primary-500/5"
+                @click="closeMenu"
+              >
+                Find a species
+              </RouterLink>
+              <RouterLink
+                :to="{
                   name: 'history',
                   params: { keyId: route.params.keyId, nodeId: route.params.nodeId }
                 }"

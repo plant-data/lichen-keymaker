@@ -1,9 +1,12 @@
 <template>
   <div>
-    <div class="mb-4 flex items-center gap-2">
+    <div class="mb-4 flex flex-wrap items-center gap-2">
       <span class="text-xs font-medium uppercase tracking-wide text-surface-400">Display</span>
       <ViewSwitcher :options="switcherOptions" variant="pills" />
-      <ExportPdfButton class="ml-auto" />
+      <div class="flex w-full gap-2 sm:ml-auto sm:w-auto">
+        <CopyToClipBoardButton class="flex-1 sm:flex-none" />
+        <ExportPdfButton class="flex-1 sm:flex-none" />
+      </div>
     </div>
     <div
       class="steps-table-container mx-auto w-[96vw] max-w-full overflow-hidden rounded-md border border-surface-300"
@@ -27,6 +30,7 @@ import SimpleKeyTable from '@/components/key/SimpleKeyTable.vue'
 import KeyTableDescriptions from '@/components/key/KeyTableDescriptions.vue'
 import ViewSwitcher from '@/components/key/ViewSwitcher.vue'
 import ExportPdfButton from '@/components/key/ExportPdfButton.vue'
+import CopyToClipBoardButton from '@/components/key/CopyToClipBoardButton.vue'
 import { paths } from '@/config/endpoints'
 import type { KeyLead } from '@/types'
 
