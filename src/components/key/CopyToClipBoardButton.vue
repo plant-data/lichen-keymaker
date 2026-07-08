@@ -119,30 +119,27 @@ const stripHtml = (html: string | null): string => {
   return (el.textContent ?? '').replace(/\s+/g, ' ').trim()
 }
 
-// build the <img> tags for a row: couplet illustration and/or species thumbnail,
-// referenced by absolute URL (loaded when pasted into a rich-text target)
-const imageCell = (item: KeyLead): string => {
-  const imgs: string[] = []
-  if (item.leadImage) {
-    imgs.push(`<img src="${leadImageToUrl(item.leadImage)}" style="max-height:80px;" />`)
-  }
-  if (item.speciesImage) {
-    imgs.push(`<img src="${imageUrlToThumbNailUrl(item.speciesImage)}" style="max-height:80px;" />`)
-  }
-  return imgs.join(' ')
-}
+// A sized <img> on its own line, referenced by absolute URL (loaded when pasted
+// into a rich-text target). The `width` attribute — not just CSS — is set because
+// Word ignores `max-height`/`max-width` styles and would otherwise paste the image
+// at its full natural size. Height is left out so the aspect ratio is preserved.
+const imageTag = (url: string, width: number): string =>
+  `<br /><img src="${url}" width="${width}" style="width:${width}px;height:auto;" />`
 
 const buildHtml = (rows: KeyLead[], withImages: boolean): string => {
+  // couplet illustration goes in the Lead Text cell, species photo in the Lead to
+  // cell (under the species name) — no separate image column
+  const leadImg = (item: KeyLead) =>
+    withImages && item.leadImage ? imageTag(leadImageToUrl(item.leadImage), 180) : ''
+  const speciesImg = (item: KeyLead) =>
+    withImages && item.speciesImage ? imageTag(imageUrlToThumbNailUrl(item.speciesImage), 110) : ''
+
   const body = rows
     .map(
       (item) => `<tr>
       <td style="padding:4px;border:1px solid #ccc;">${item.parentId}</td>
-      <td style="padding:4px;border:1px solid #ccc;">${item.leadText ?? ''}</td>
-      <td style="padding:4px;border:1px solid #ccc;">${item.leadId}</td>${
-        withImages
-          ? `\n      <td style="padding:4px;border:1px solid #ccc;">${imageCell(item)}</td>`
-          : ''
-      }
+      <td style="padding:4px;border:1px solid #ccc;">${item.leadText ?? ''}${leadImg(item)}</td>
+      <td style="padding:4px;border:1px solid #ccc;">${item.leadId}${speciesImg(item)}</td>
     </tr>`
     )
     .join('')
@@ -152,9 +149,7 @@ const buildHtml = (rows: KeyLead[], withImages: boolean): string => {
       <tr>
         <th style="padding:4px;border:1px solid #ccc;">Couplet</th>
         <th style="padding:4px;border:1px solid #ccc;">Lead Text</th>
-        <th style="padding:4px;border:1px solid #ccc;">Lead to</th>${
-          withImages ? `\n        <th style="padding:4px;border:1px solid #ccc;">Image</th>` : ''
-        }
+        <th style="padding:4px;border:1px solid #ccc;">Lead to</th>
       </tr>
     </thead>
     <tbody>${body}</tbody>
