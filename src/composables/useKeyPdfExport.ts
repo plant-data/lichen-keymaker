@@ -1,17 +1,23 @@
 import { ref } from 'vue'
 import type { KeyLead } from '@/types'
 import type { PdfExportRequest, PdfExportResponse, PdfRow } from '@/workers/pdfExport.worker'
+import { leadImageToUrl, imageUrlToThumbNailUrl } from '@/utils/imageUtils'
 
 // Map to a plain, non-reactive shape with only the fields the PDF needs. This
 // strips Vue reactive proxies (which cannot be structured-cloned by postMessage)
 // and keeps the payload small even for the whole multi-thousand-row key.
-function toPdfRow(row: KeyLead): PdfRow {
+// Image URLs are resolved here (main thread has access to the env-based paths)
+// and only when requested; the species photo uses its thumbnail to keep size down.
+function toPdfRow(row: KeyLead, includeImages: boolean): PdfRow {
   return {
     parentId: row.parentId,
     leadText: row.leadText,
     leadId: row.leadId,
     italicId: row.italicId,
-    species_description: row.species_description
+    species_description: row.species_description,
+    leadImageUrl: includeImages && row.leadImage ? leadImageToUrl(row.leadImage) : null,
+    speciesImageUrl:
+      includeImages && row.speciesImage ? imageUrlToThumbNailUrl(row.speciesImage) : null
   }
 }
 
@@ -19,6 +25,7 @@ export interface ExportOptions {
   // the already-resolved leads to export (caller picks which list from the store)
   rows: KeyLead[]
   includeDescriptions: boolean
+  includeImages: boolean
   fileName: string
 }
 
@@ -45,7 +52,7 @@ export function useKeyPdfExport() {
     progress.value = 0
     error.value = null
 
-    const { rows, includeDescriptions, fileName } = options
+    const { rows, includeDescriptions, includeImages, fileName } = options
 
     const worker = new Worker(new URL('../workers/pdfExport.worker.ts', import.meta.url), {
       type: 'module'
@@ -73,8 +80,9 @@ export function useKeyPdfExport() {
         worker.onerror = (e) => reject(new Error(e.message || 'Worker failed'))
 
         const request: PdfExportRequest = {
-          rows: rows.map(toPdfRow),
-          includeDescriptions
+          rows: rows.map((row) => toPdfRow(row, includeImages)),
+          includeDescriptions,
+          includeImages
         }
         worker.postMessage(request)
       })

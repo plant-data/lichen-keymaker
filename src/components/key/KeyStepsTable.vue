@@ -41,7 +41,7 @@ const props = defineProps<{
 const route = useRoute()
 
 const viewOptions = [
-  { name: 'detailed-all', label: 'Illustrated all' },
+  { name: 'detailed-all', label: 'Fully illustrated' },
   { name: 'detailed', label: 'Illustrated' },
   { name: 'description', label: 'With descriptions' },
   { name: 'simple', label: 'Simple' }

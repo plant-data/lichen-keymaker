@@ -27,11 +27,15 @@ export interface PdfRow {
   leadId: number | string | null
   italicId: number | null
   species_description: string | null
+  // absolute image URLs, resolved on the main thread; only set when includeImages
+  leadImageUrl?: string | null
+  speciesImageUrl?: string | null
 }
 
 export interface PdfExportRequest {
   rows: PdfRow[]
   includeDescriptions: boolean
+  includeImages: boolean
 }
 
 export type PdfExportResponse =
@@ -46,8 +50,56 @@ const COL_LEAD_TO = 92
 const COLUMN_GAP = 6
 const BUILD_PROGRESS_CEILING = 85
 const PROGRESS_CHUNK = 250
+// when images are embedded, fetching them is the slow part: give it the lower
+// band of the progress bar and shrink the content-build band accordingly
+const FETCH_PROGRESS_CEILING = 60
+const IMG_WIDTH = 120
 
-function buildRow(row: PdfRow, includeDescriptions: boolean): Content[] {
+// Fetch an image and return a base64 data-URL (pdfmake needs image data, not a
+// URL). Runs in the worker; fetch/blob/arrayBuffer are all available here.
+async function fetchAsDataUrl(url: string): Promise<string> {
+  const res = await fetch(url)
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`)
+  }
+  const blob = await res.blob()
+  const bytes = new Uint8Array(await blob.arrayBuffer())
+  let binary = ''
+  const CHUNK = 0x8000
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK))
+  }
+  const mime = blob.type || 'image/jpeg'
+  return `data:${mime};base64,${btoa(binary)}`
+}
+
+// Pre-fetch every distinct image URL once. Failures are skipped (the URL is
+// simply absent from the map) so the PDF still generates without that image.
+async function fetchImageMap(rows: PdfRow[]): Promise<Map<string, string>> {
+  const urls = new Set<string>()
+  for (const row of rows) {
+    if (row.leadImageUrl) urls.add(row.leadImageUrl)
+    if (row.speciesImageUrl) urls.add(row.speciesImageUrl)
+  }
+  const map = new Map<string, string>()
+  const list = [...urls]
+  for (let i = 0; i < list.length; i++) {
+    try {
+      map.set(list[i], await fetchAsDataUrl(list[i]))
+    } catch {
+      // ignore: skip unreachable/failed images
+    }
+    const value = Math.round(((i + 1) / list.length) * FETCH_PROGRESS_CEILING)
+    ctx.postMessage({ type: 'progress', value } satisfies PdfExportResponse)
+  }
+  return map
+}
+
+function buildRow(
+  row: PdfRow,
+  includeDescriptions: boolean,
+  imageMap: Map<string, string> | null
+): Content[] {
   // `leadId` is the next couplet number, or the species name for a terminal
   // lead (set by Tree.adjustIds).
   const leadTo = String(row.leadId ?? '')
@@ -73,21 +125,40 @@ function buildRow(row: PdfRow, includeDescriptions: boolean): Content[] {
     })
   }
 
+  if (imageMap) {
+    // couplet illustration and/or species photo, whichever resolved successfully
+    for (const url of [row.leadImageUrl, row.speciesImageUrl]) {
+      const dataUrl = url ? imageMap.get(url) : undefined
+      if (dataUrl) {
+        blocks.push({
+          image: dataUrl,
+          width: IMG_WIDTH,
+          margin: [COL_COUPLET + COLUMN_GAP, 2, 0, 4]
+        })
+      }
+    }
+  }
+
   return blocks
 }
 
-function buildDocDefinition(req: PdfExportRequest): TDocumentDefinitions {
-  const { rows, includeDescriptions } = req
+async function buildDocDefinition(req: PdfExportRequest): Promise<TDocumentDefinitions> {
+  const { rows, includeDescriptions, includeImages } = req
   const total = rows.length
+
+  const imageMap = includeImages ? await fetchImageMap(rows) : null
+  // content build occupies the band between fetching and the final createPdf
+  const buildFloor = includeImages ? FETCH_PROGRESS_CEILING : 0
+  const buildSpan = BUILD_PROGRESS_CEILING - buildFloor
 
   const content: Content[] = [
     { text: 'ITALIC - THE KEYMAKER', fontSize: 14, bold: true, margin: [0, 0, 0, 10] }
   ]
 
   for (let i = 0; i < total; i++) {
-    content.push(...buildRow(rows[i], includeDescriptions))
+    content.push(...buildRow(rows[i], includeDescriptions, imageMap))
     if (i % PROGRESS_CHUNK === 0) {
-      const value = Math.round((i / total) * BUILD_PROGRESS_CEILING)
+      const value = buildFloor + Math.round((i / total) * buildSpan)
       ctx.postMessage({ type: 'progress', value } satisfies PdfExportResponse)
     }
   }
@@ -109,7 +180,7 @@ function buildDocDefinition(req: PdfExportRequest): TDocumentDefinitions {
 
 ctx.onmessage = async (event: MessageEvent<PdfExportRequest>) => {
   try {
-    const docDefinition = buildDocDefinition(event.data)
+    const docDefinition = await buildDocDefinition(event.data)
     ctx.postMessage({ type: 'progress', value: BUILD_PROGRESS_CEILING } satisfies PdfExportResponse)
 
     const blob = await pdfMake.createPdf(docDefinition).getBlob()
