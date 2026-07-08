@@ -19,7 +19,7 @@
             type="text"
             autocomplete="off"
             placeholder="Type a species name…"
-            class="w-full rounded-xl border border-surface-300 py-2 pl-4 pr-10 text-sm text-surface-700 transition duration-150 ease-in-out focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            class="w-full rounded-xl border border-surface-300 py-2 pl-4 pr-10 text-base text-surface-700 transition duration-150 ease-in-out focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm"
           />
           <button
             v-if="query"
@@ -37,36 +37,56 @@
         </div>
       </div>
 
-      <div class="grid gap-8 lg:grid-cols-[minmax(0,20rem)_1fr]">
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
         <!-- Species list -->
-        <div>
-          <p class="mb-2 text-xs font-medium uppercase tracking-wide text-surface-400">
-            {{ filtered.length }} species
-          </p>
-          <ul class="space-y-1">
-            <li v-for="species in displayedData" :key="species.name">
-              <button
-                type="button"
-                @click="selectSpecies(species)"
-                class="block w-full rounded-md px-3 py-2 text-left text-sm font-medium transition duration-150 ease-in-out hover:bg-primary-500/5"
-                :class="
-                  selectedSpecies === species.name
-                    ? 'bg-primary-500/10 text-primary-700'
-                    : 'text-surface-700'
-                "
-              >
-                {{ species.name }}
-              </button>
-            </li>
-          </ul>
-          <p v-if="filtered.length === 0" class="px-3 py-2 text-sm text-surface-400">
-            No species match “{{ debouncedQuery }}”.
-          </p>
-          <div v-if="!allLoaded" ref="loadMoreTrigger" class="h-10"></div>
+        <div class="min-w-0">
+          <!-- Mobile-only compact bar: shown once a species is picked so the list can collapse
+               and let the tree rise to the top; tapping it re-expands the list -->
+          <button
+            v-if="selectedSpecies"
+            type="button"
+            @click="listExpanded = !listExpanded"
+            class="mb-3 flex w-full items-center justify-between rounded-lg border border-surface-200 bg-white px-3 py-2 text-left lg:hidden"
+          >
+            <span class="min-w-0 truncate text-sm font-medium text-surface-700">
+              {{ selectedSpecies }}
+            </span>
+            <span class="ml-2 shrink-0 text-xs font-medium text-primary-600">
+              {{ listExpanded ? 'Close' : 'Change' }}
+            </span>
+          </button>
+
+          <!-- List body: toggled via class (not v-if) so loadMoreTrigger stays mounted; always
+               visible on desktop regardless of listExpanded -->
+          <div :class="listExpanded ? 'block' : 'hidden'" class="lg:block">
+            <p class="mb-2 text-xs font-medium uppercase tracking-wide text-surface-400">
+              {{ filtered.length }} species
+            </p>
+            <ul class="space-y-1">
+              <li v-for="species in displayedData" :key="species.name">
+                <button
+                  type="button"
+                  @click="selectSpecies(species)"
+                  class="block w-full rounded-md px-3 py-2 text-left text-sm font-medium transition duration-150 ease-in-out hover:bg-primary-500/5"
+                  :class="
+                    selectedSpecies === species.name
+                      ? 'bg-primary-500/10 text-primary-700'
+                      : 'text-surface-700'
+                  "
+                >
+                  {{ species.name }}
+                </button>
+              </li>
+            </ul>
+            <p v-if="filtered.length === 0" class="px-3 py-2 text-sm text-surface-400">
+              No species match “{{ debouncedQuery }}”.
+            </p>
+            <div v-if="!allLoaded" ref="loadMoreTrigger" class="h-10"></div>
+          </div>
         </div>
 
         <!-- Steps leading to the selected species -->
-        <div>
+        <div class="min-w-0">
           <div v-if="!selectedSpecies" class="pt-2 text-sm text-surface-400">
             Select a species to see the steps that lead to it.
           </div>
@@ -174,8 +194,12 @@ const selectedSpecies = ref<string | null>(null)
 const pathTree = ref<PathTreeNode | null>(null)
 const pathCount = ref(0)
 
+// controls the mobile list collapse; ignored on desktop (list is always lg:block)
+const listExpanded = ref(true)
+
 const selectSpecies = (species: KeyUniqueSpeciesData) => {
   selectedSpecies.value = species.name
+  listExpanded.value = false
   const speciesPaths = keyStore.getKeyTree()?.getPathsToSpecies(species.name) ?? []
   pathCount.value = speciesPaths.length
   pathTree.value = mergePathsToTree(speciesPaths)

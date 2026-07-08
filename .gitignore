@@ -34,3 +34,5 @@ playwright-report/
 
 # env
 .env
+
+key-maker-test/
