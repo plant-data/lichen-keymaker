@@ -8,7 +8,7 @@
 
 import * as pdfMakeNs from 'pdfmake/build/pdfmake'
 import vfs from 'pdfmake/build/vfs_fonts'
-import type { Content, TDocumentDefinitions } from 'pdfmake/interfaces'
+import type { Column, Content, TDocumentDefinitions } from 'pdfmake/interfaces'
 import { htmlToPdfmake } from '@/utils/htmlToPdfmake'
 
 // The browser UMD build's default export is the pdfMake instance; its methods
@@ -104,12 +104,39 @@ function buildRow(
   // lead (set by Tree.adjustIds).
   const leadTo = String(row.leadId ?? '')
 
+  // resolved images (if any): the couplet illustration sits under the lead text,
+  // the species photo under the species name — each in its own column
+  const leadImage = imageMap && row.leadImageUrl ? imageMap.get(row.leadImageUrl) : undefined
+  const speciesImage =
+    imageMap && row.speciesImageUrl ? imageMap.get(row.speciesImageUrl) : undefined
+
+  const leadColumn: Column = leadImage
+    ? {
+        width: '*',
+        stack: [
+          { text: htmlToPdfmake(row.leadText) },
+          { image: leadImage, width: IMG_WIDTH, margin: [0, 2, 0, 0] }
+        ]
+      }
+    : { width: '*', text: htmlToPdfmake(row.leadText) }
+
+  const leadToColumn: Column = speciesImage
+    ? {
+        width: COL_LEAD_TO,
+        stack: [
+          { text: leadTo },
+          // fit within the (narrow) species-name column so it stays under the name
+          { image: speciesImage, fit: [COL_LEAD_TO, IMG_WIDTH], margin: [0, 2, 0, 0] }
+        ]
+      }
+    : { width: COL_LEAD_TO, text: leadTo }
+
   const blocks: Content[] = [
     {
       columns: [
         { width: COL_COUPLET, text: String(row.parentId ?? ''), bold: true },
-        { width: '*', text: htmlToPdfmake(row.leadText) },
-        { width: COL_LEAD_TO, text: leadTo }
+        leadColumn,
+        leadToColumn
       ],
       columnGap: COLUMN_GAP,
       margin: [0, 1.5, 0, 1.5]
@@ -123,20 +150,6 @@ function buildRow(
       color: '#555555',
       margin: [COL_COUPLET + COLUMN_GAP, 0, 0, 4]
     })
-  }
-
-  if (imageMap) {
-    // couplet illustration and/or species photo, whichever resolved successfully
-    for (const url of [row.leadImageUrl, row.speciesImageUrl]) {
-      const dataUrl = url ? imageMap.get(url) : undefined
-      if (dataUrl) {
-        blocks.push({
-          image: dataUrl,
-          width: IMG_WIDTH,
-          margin: [COL_COUPLET + COLUMN_GAP, 2, 0, 4]
-        })
-      }
-    }
   }
 
   return blocks
