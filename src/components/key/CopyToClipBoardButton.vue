@@ -11,57 +11,44 @@
 
     <div
       v-if="open"
-      class="absolute left-0 z-20 mt-2 w-56 max-w-[calc(100vw-1rem)] rounded-xl border border-surface-300 bg-white p-4 shadow-lg sm:left-auto sm:right-0"
+      class="absolute left-0 z-20 mt-2 w-64 max-w-[calc(100vw-1rem)] rounded-xl border border-surface-300 bg-white p-4 shadow-lg sm:left-auto sm:right-0"
     >
-      <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-surface-400">
-        Copy as table
-      </p>
+      <fieldset class="mb-3">
+        <label class="mb-1 flex cursor-pointer items-center gap-2 text-sm text-surface-700">
+          <input type="radio" value="whole" v-model="scope" class="accent-primary-500" />
+          Whole generated key
+        </label>
+        <label class="flex cursor-pointer items-center gap-2 text-sm text-surface-700">
+          <input type="radio" value="step" v-model="scope" class="accent-primary-500" />
+          From current step
+        </label>
+      </fieldset>
 
       <label
-        class="mb-2 flex items-center gap-2 text-sm"
+        class="mb-1 flex items-center gap-2 text-sm"
         :class="
-          imagesEverAllowed
-            ? 'cursor-pointer text-surface-700'
-            : 'cursor-not-allowed text-surface-400'
+          imagesAllowed ? 'cursor-pointer text-surface-700' : 'cursor-not-allowed text-surface-400'
         "
       >
         <input
           type="checkbox"
           v-model="includeImages"
-          :disabled="!imagesEverAllowed"
+          :disabled="!imagesAllowed"
           class="accent-primary-500"
         />
         Include images
       </label>
-      <p v-if="!imagesEverAllowed" class="mb-2 text-xs text-surface-400">
-        Available for ≤ 100 species.
+      <p v-if="!imagesAllowed" class="mb-4 text-xs text-surface-400">
+        Available for ≤ 100 species (this scope has {{ scopeCount ?? 0 }}).
       </p>
+      <div v-else class="mb-4"></div>
 
       <button
         type="button"
-        @click="copy('whole')"
-        class="mb-1 w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:bg-primary-500/5"
+        @click="onCopy"
+        class="w-full rounded-xl border border-primary-500 bg-primary-500 px-3 py-2 text-sm font-medium text-white transition duration-150 ease-in-out hover:bg-primary-600"
       >
-        Full key
-        <span
-          v-if="includeImages && (wholeCount ?? Infinity) > 100"
-          class="text-xs font-normal text-surface-400"
-        >
-          — text only ({{ wholeCount }} species)
-        </span>
-      </button>
-      <button
-        type="button"
-        @click="copy('step')"
-        class="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:bg-primary-500/5"
-      >
-        From current step
-        <span
-          v-if="includeImages && (stepCount ?? Infinity) > 100"
-          class="text-xs font-normal text-surface-400"
-        >
-          — text only ({{ stepCount }} species)
-        </span>
+        {{ copied ? 'Copied!' : 'Copy' }}
       </button>
 
       <p v-if="error" class="mt-2 text-xs text-red-600">{{ error }}</p>
@@ -70,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { useKeyStore } from '@/stores/keyStore'
 import { leadImageToUrl, imageUrlToThumbNailUrl } from '@/utils/imageUtils'
 import type { KeyLead } from '@/types'
@@ -83,16 +70,22 @@ const open = ref(false)
 const copied = ref(false)
 const error = ref<string | null>(null)
 const root = ref<HTMLElement | null>(null)
+const scope = ref<CopyScope>('step')
 const includeImages = ref(false)
 let copiedTimer: ReturnType<typeof setTimeout> | null = null
 
-// per-scope species counts; images are only embedded for scopes with ≤ 100
-const wholeCount = computed(() => keyStore.speciesCount)
-const stepCount = computed(() => keyStore.currentSpeciesCount)
-// the checkbox is offered as long as at least one scope qualifies
-const imagesEverAllowed = computed(
-  () => (wholeCount.value ?? Infinity) <= 100 || (stepCount.value ?? Infinity) <= 100
+// species count of the selected scope; images are only embedded for ≤ 100 species
+const scopeCount = computed(() =>
+  scope.value === 'step' ? keyStore.currentSpeciesCount : keyStore.speciesCount
 )
+const imagesAllowed = computed(() => (scopeCount.value ?? Infinity) <= 100)
+
+// drop the images option when switching to a scope that no longer qualifies
+watch(imagesAllowed, (allowed) => {
+  if (!allowed) {
+    includeImages.value = false
+  }
+})
 
 const togglePanel = () => {
   open.value = !open.value
@@ -172,11 +165,10 @@ const flashCopied = () => {
   }, 2000)
 }
 
-const copy = async (scope: CopyScope) => {
+const onCopy = async () => {
   error.value = null
-  const rows = scope === 'whole' ? keyStore.stepsList : keyStore.currentStepsList
-  const count = scope === 'whole' ? wholeCount.value : stepCount.value
-  const withImages = includeImages.value && (count ?? Infinity) <= 100
+  const rows = scope.value === 'step' ? keyStore.currentStepsList : keyStore.stepsList
+  const withImages = includeImages.value && imagesAllowed.value
   const html = buildHtml(rows, withImages)
   const text = buildText(rows)
 

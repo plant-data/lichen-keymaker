@@ -15,9 +15,6 @@
       class="absolute right-0 z-20 mt-2 w-64 max-w-[calc(100vw-1rem)] rounded-xl border border-surface-300 bg-white p-4 shadow-lg"
     >
       <fieldset class="mb-3">
-        <legend class="mb-1.5 text-xs font-semibold uppercase tracking-wide text-surface-400">
-          Scope
-        </legend>
         <label class="mb-1 flex cursor-pointer items-center gap-2 text-sm text-surface-700">
           <input type="radio" value="whole" v-model="scope" class="accent-primary-500" />
           Whole generated key
