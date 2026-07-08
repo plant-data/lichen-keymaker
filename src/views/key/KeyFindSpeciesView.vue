@@ -104,8 +104,14 @@
               </p>
             </div>
 
-            <div v-if="pathTree" class="overflow-x-auto pb-4">
-              <KeyPathTree :node="pathTree" :depth="1" />
+            <!-- w-max makes the tree lay out at its full natural width so the whole thing is
+                 scrollable from the left; mx-auto still centers it when it fits the viewport.
+                 Without this the centered tree overflows both sides and its left half is clipped
+                 and unreachable by horizontal scroll. -->
+            <div v-if="pathTree" ref="treeScroll" class="overflow-x-auto pb-4">
+              <div class="mx-auto w-max">
+                <KeyPathTree :node="pathTree" :depth="1" />
+              </div>
             </div>
 
             <p v-else class="text-sm text-surface-400">No path to this species was found.</p>
@@ -117,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useKeyStore } from '@/stores/keyStore'
 import { usePaginatedData } from '@/composables/usePaginatedData'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
@@ -197,12 +203,22 @@ const pathCount = ref(0)
 // controls the mobile list collapse; ignored on desktop (list is always lg:block)
 const listExpanded = ref(true)
 
+// horizontal scroll container for the tree; centered on render so a wide tree opens
+// with its trunk in view and the branches equally reachable on both sides
+const treeScroll = ref<HTMLElement | null>(null)
+
 const selectSpecies = (species: KeyUniqueSpeciesData) => {
   selectedSpecies.value = species.name
   listExpanded.value = false
   const speciesPaths = keyStore.getKeyTree()?.getPathsToSpecies(species.name) ?? []
   pathCount.value = speciesPaths.length
   pathTree.value = mergePathsToTree(speciesPaths)
+  nextTick(() => {
+    const el = treeScroll.value
+    if (el) {
+      el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2
+    }
+  })
 }
 </script>
 
