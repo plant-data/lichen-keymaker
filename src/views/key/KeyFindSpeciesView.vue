@@ -67,7 +67,7 @@
                 <button
                   type="button"
                   @click="selectSpecies(species)"
-                  class="block w-full rounded-md px-3 py-2 text-left text-sm font-medium transition duration-150 ease-in-out hover:bg-primary-500/5"
+                  class="block w-full rounded-md px-3 py-2 text-left text-sm font-medium transition duration-150 ease-in-out hover:bg-surface-100"
                   :class="
                     selectedSpecies === species.name
                       ? 'bg-primary-500/10 text-primary-700'

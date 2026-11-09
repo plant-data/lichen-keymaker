@@ -5,7 +5,7 @@
       v-for="option in options"
       :key="option.label"
       :to="option.to"
-      class="flex min-w-0 items-center justify-center whitespace-normal rounded-xl border border-surface-300 bg-white px-2 py-2 text-center text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5 sm:px-4 lg:whitespace-nowrap"
+      class="flex min-w-0 items-center justify-center whitespace-normal rounded-xl border border-surface-300 bg-white px-2 py-2 text-center text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-surface-400 hover:bg-surface-50 sm:px-4 lg:whitespace-nowrap"
       :class="block ? 'flex-1 lg:flex-none' : ''"
       activeClass="!border-primary-500 !bg-primary-500 !text-white"
     >
@@ -21,7 +21,7 @@
         v-for="option in options"
         :key="option.label"
         :to="option.to"
-        class="whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
+        class="whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-surface-400 hover:bg-surface-50"
         activeClass="!border-primary-500 !bg-primary-500 !text-white"
       >
         {{ option.label }}

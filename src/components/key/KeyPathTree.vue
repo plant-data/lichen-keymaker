@@ -19,7 +19,7 @@
         <button
           type="button"
           @click="goToNode(node.data.leadId, 'interactive')"
-          class="rounded-full border border-surface-300 bg-white px-3 py-1 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5 hover:text-primary-700"
+          class="rounded-full border border-surface-300 bg-white px-3 py-1 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-surface-400 hover:bg-surface-50 hover:text-surface-900"
         >
           Move to this step
         </button>

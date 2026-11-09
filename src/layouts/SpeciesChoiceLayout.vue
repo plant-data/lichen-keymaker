@@ -31,5 +31,5 @@ const switcherBase =
   'flex flex-1 items-center justify-center whitespace-normal rounded-xl border px-4 py-2 text-center text-sm font-medium transition duration-150 ease-in-out lg:whitespace-nowrap'
 const switcherActive = 'border-primary-500 bg-primary-500 text-white'
 const switcherInactive =
-  'border-surface-300 bg-white text-surface-700 hover:border-primary-500 hover:bg-primary-500/5'
+  'border-surface-300 bg-white text-surface-700 hover:border-surface-400 hover:bg-surface-50'
 </script>

@@ -4,7 +4,7 @@
       type="button"
       @click="togglePanel"
       :disabled="isExporting"
-      class="inline-flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+      class="inline-flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-surface-400 hover:bg-surface-50 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
     >
       <i class="pi pi-file-pdf text-sm"></i>
       <span>Export PDF</span>
@@ -45,7 +45,7 @@
         Include images
       </label>
       <p v-if="!imagesAllowed" class="mb-4 text-xs text-surface-400">
-        Available for ≤ 100 species (this scope has {{ scopeCount ?? 0 }}).
+        Available for ≤ 100 species.
       </p>
       <div v-else class="mb-4"></div>
 

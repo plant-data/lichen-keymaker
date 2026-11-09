@@ -39,7 +39,7 @@
           <button
             v-else
             @click="returnToStep(step.leadId)"
-            class="flex-shrink-0 rounded-full border border-surface-300 bg-white px-3 py-1.5 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
+            class="flex-shrink-0 rounded-full border border-surface-300 bg-white px-3 py-1.5 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-surface-400 hover:bg-surface-50"
           >
             Return to this step
           </button>

@@ -5,14 +5,14 @@
         <button
           v-if="!isRoot"
           @click="navigateToParent"
-          class="min-w-20 rounded-xl border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
+          class="min-w-20 rounded-xl border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-surface-400 hover:bg-surface-50"
         >
           Back
         </button>
         <button
           v-if="!isRoot"
           @click="navigateToRoot"
-          class="min-w-20 rounded-xl border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5"
+          class="min-w-20 rounded-xl border border-surface-300 bg-white px-3 py-2 text-sm font-medium text-surface-700 transition duration-150 ease-in-out hover:border-surface-400 hover:bg-surface-50"
         >
           Restart
         </button>
@@ -27,8 +27,7 @@
           :class="[
             'w-full max-w-2xl overflow-hidden rounded-md border border-gray-200 bg-white pt-2 shadow-sm',
             {
-              'cursor-pointer hover:border-primary-500 hover:bg-primary-500/5':
-                !child.data.leadSpecies
+              'cursor-pointer hover:border-surface-400 hover:bg-surface-50': !child.data.leadSpecies
             }
           ]"
           @click="!child.data.leadSpecies && navigateToNode(child)"

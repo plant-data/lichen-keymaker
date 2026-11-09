@@ -3,7 +3,7 @@
     <button
       type="button"
       @click="togglePanel"
-      class="inline-flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-primary-500 hover:bg-primary-500/5 sm:w-auto"
+      class="inline-flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-surface-700 transition duration-150 ease-in-out hover:border-surface-400 hover:bg-surface-50 sm:w-auto"
     >
       <i class="pi pi-copy text-sm"></i>
       <span>{{ copied ? 'Copied!' : 'Copy' }}</span>
