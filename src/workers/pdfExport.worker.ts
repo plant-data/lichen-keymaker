@@ -64,7 +64,6 @@ const COLOR_COUPLET = '#0f172a' // couplet number + species name
 const COLOR_TARGET = '#475569' // "→ N" go-to marker
 const COLOR_RULE = '#cbd5e1' // separator between couplets
 const COLOR_PANEL_BG = '#f1f5f9' // result panel background
-const COLOR_DESC_LABEL = '#94a3b8'
 const COLOR_DESC_TEXT = '#475569'
 
 // Fetch an image and return a base64 data-URL (pdfmake needs image data, not a
@@ -129,16 +128,10 @@ function buildResultPanel(
   if (hasDescription) {
     inner.push({
       width: '*',
-      stack: [
-        { text: 'DESCRIPTION', fontSize: 6.5, bold: true, color: COLOR_DESC_LABEL },
-        {
-          text: htmlToPdfmake(row.species_description),
-          fontSize: 8,
-          color: COLOR_DESC_TEXT,
-          lineHeight: 1.15,
-          margin: [0, 2, 0, 0]
-        }
-      ]
+      text: htmlToPdfmake(row.species_description),
+      fontSize: 8,
+      color: COLOR_DESC_TEXT,
+      lineHeight: 1.15
     })
   }
 
@@ -158,8 +151,8 @@ function buildResultPanel(
 }
 
 // One lead (one alternative of a couplet): the descriptive text on the left, and
-// on the right either "→ N" (go to couplet N) or, for a terminal lead, the
-// resulting species name in bold. Any couplet illustration and the species
+// on the right either the next couplet number (go-to) or, for a terminal lead,
+// the resulting species name in bold. Any couplet illustration and the species
 // result panel are stacked underneath.
 function buildLead(
   row: PdfRow,
@@ -181,7 +174,7 @@ function buildLead(
         { width: '*', text: htmlToPdfmake(row.leadText) },
         {
           width: TARGET_WIDTH,
-          text: isSpecies ? target : `→ ${target}`,
+          text: target,
           alignment: 'right',
           bold: isSpecies,
           color: isSpecies ? COLOR_COUPLET : COLOR_TARGET
@@ -266,12 +259,6 @@ async function buildDocDefinition(req: PdfExportRequest): Promise<TDocumentDefin
       fontSize: 16,
       bold: true,
       color: COLOR_COUPLET,
-      margin: [0, 0, 0, 2]
-    },
-    {
-      text: 'Dichotomous identification key · read each couplet, pick the matching lead, then follow it to the next couplet number or to a species.',
-      fontSize: 8,
-      color: COLOR_DESC_TEXT,
       margin: [0, 0, 0, 12]
     }
   ]

@@ -121,7 +121,7 @@ const onExport = async () => {
     rows: isStep ? keyStore.currentStepsList : keyStore.stepsList,
     includeDescriptions: includeDescriptions.value,
     includeImages: includeImages.value && imagesAllowed.value,
-    fileName: isStep ? 'lichen-key-step.pdf' : 'lichen-key.pdf'
+    fileName: 'generated-key.pdf'
   })
   if (!error.value) {
     open.value = false
